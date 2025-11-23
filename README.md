@@ -71,7 +71,8 @@ let package = Package(
 2. Enter the repository URL:
 
    ```text
-   https://github.com/gokhanbozkurt/KeychainWrapper.git
+   https://github.com/gokhanBozkrt/KeychainWrapper.git
+
    ```
 
 3. Select **KeychainWrapper** for the targets where you want to use it.
