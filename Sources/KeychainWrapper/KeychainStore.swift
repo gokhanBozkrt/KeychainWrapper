@@ -7,6 +7,26 @@
 
 import Foundation
 
+/// A lightweight, strongly typed Keychain manager used internally by `SecureStorage`.
+///
+/// `KeychainStore` provides:
+/// - JSON-encoded read/write operations
+/// - Automatic update for duplicate items
+/// - Service/synchronizable configuration support
+/// - Detailed error handling through `KeychainWrapperError`
+///
+/// Use `KeychainStore.shared` to store and retrieve any `Codable` value.
+///
+/// ## Example
+/// ```swift
+/// try KeychainStore.shared.set("John", key: "username")
+///
+/// let username: String = try KeychainStore.shared.get(String.self, key: "username")
+/// ```
+///
+/// This class should not be instantiated directly.
+/// Use `KeychainStore.shared` instead.
+
 final class KeychainStore: KeychainWrapperStoring {
   
     @MainActor static let shared = KeychainStore()
