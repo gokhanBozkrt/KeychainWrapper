@@ -26,7 +26,6 @@ import Foundation
 ///
 /// This class should not be instantiated directly.
 /// Use `KeychainStore.shared` instead.
-
 final class KeychainStore: KeychainWrapperStoring {
   
     @MainActor static let shared = KeychainStore()
