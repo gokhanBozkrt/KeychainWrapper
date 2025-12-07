@@ -1,13 +1,13 @@
 # KeychainWrapper
 
 🔐 **A SwiftUI-friendly way to use the iOS Keychain**  
-Swift 6.2 • iOS 14+
+Swift 6.0 • iOS 14+
 
 KeychainWrapper is a small, strongly-typed wrapper around the iOS Keychain focused on:
 
 - A simple, `Codable`-based `KeychainStore` API
 - A `@SecureStorage` property wrapper that feels like `@State`, but stores data securely
-- Modern Swift 6.2 and SwiftUI usage with no external dependencies
+- Modern Swift 6.0 and SwiftUI usage with no external dependencies
 
 ---
 
@@ -27,7 +27,7 @@ KeychainWrapper is a small, strongly-typed wrapper around the iOS Keychain focus
 
 ## Requirements
 
-- **Swift:** 6.2  
+- **Swift:** 6.0  
 - **Platforms:**  
   - iOS 14.0+
 
@@ -36,7 +36,7 @@ KeychainWrapper is a small, strongly-typed wrapper around the iOS Keychain focus
 ## From `Package.swift`
 
 ```swift
-// swift-tools-version: 6.2
+// swift-tools-version: 6.0
 
 import PackageDescription
 
