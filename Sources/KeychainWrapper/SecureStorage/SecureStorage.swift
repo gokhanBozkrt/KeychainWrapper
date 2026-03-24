@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Combine
 
 /// A property wrapper that securely stores values in the iOS Keychain,
 /// while providing a SwiftUI-friendly API similar to `@State`.
@@ -54,6 +55,8 @@ import SwiftUI
 @propertyWrapper
 @MainActor
 public struct SecureStorage<T: Codable>: DynamicProperty {
+    /// Internal @State storage for SwiftUI view reactivity.
+    /// This acts as the primary in-memory source for Views.
     @State private var value: T
     private let key: String
 
@@ -64,9 +67,15 @@ public struct SecureStorage<T: Codable>: DynamicProperty {
     }
 
     public var wrappedValue: T {
-        get { value }
+        get {
+            // Fetch latest value from Keychain to ensure consistent state across different contexts (Views/Classes).
+            // Fall back to the memory-cached @State value if Keychain reading fails.
+            (try? KeychainStore.shared.get(T.self, key: key)) ?? value
+        }
         nonmutating set {
+            // Update memory state for SwiftUI UI updates
             value = newValue
+            // Persist the entire struct back to secure storage
             try? KeychainStore.shared.set(newValue, key: key)
         }
     }
@@ -76,6 +85,28 @@ public struct SecureStorage<T: Codable>: DynamicProperty {
             get: { wrappedValue },
             set: { wrappedValue = $0 }
         )
+    }
+
+    /// Enclosing instance subscript magic to enable advanced observation in class-based ViewModels.
+    /// This allows nested property mutations (e.g., `userInfo.userID = "..."`) to trigger the setter correctly,
+    /// ensuring both Keychain persistence and SwiftUI's `objectWillChange` notification.
+    public static subscript<EnclosingSelf>(
+        _enclosingInstance instance: EnclosingSelf,
+        wrapped wrappedKeyPath: ReferenceWritableKeyPath<EnclosingSelf, T>,
+        storage storageKeyPath: ReferenceWritableKeyPath<EnclosingSelf, Self>
+    ) -> T {
+        get {
+            return instance[keyPath: storageKeyPath].wrappedValue
+        }
+        set {
+            // Notify the class instance (ViewModel) that its content is about to change
+            if let observable = instance as? any ObservableObject {
+                (observable.objectWillChange as? ObservableObjectPublisher)?.send()
+            }
+            
+            // Execute the wrapper's setter logic (persistence + state update)
+            instance[keyPath: storageKeyPath].wrappedValue = newValue
+        }
     }
 }
 
